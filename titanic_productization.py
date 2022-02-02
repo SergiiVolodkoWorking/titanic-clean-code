@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+from transformations import add_title_from_name
+
 
 def run_all():
     train_df = pd.read_csv('data/train.csv')
@@ -18,17 +20,9 @@ def run_all():
     test_df = test_df.drop(['Ticket', 'Cabin'], axis=1)
     combine = [train_df, test_df]
 
-    # In the following code we extract Title feature using regular expressions. The RegEx pattern `(\w+\.)` matches the first word which ends with a dot character within Name feature. The `expand=False` flag returns a DataFrame.
-    #
-    # - We decide to retain the new Title feature for model training.
+    train_df = add_title_from_name(train_df)
+    test_df = add_title_from_name(test_df)
 
-    # + _cell_guid="df7f0cd4-992c-4a79-fb19-bf6f0c024d4b" _uuid="c916644bd151f3dc8fca900f656d415b4c55e2bc"
-    for dataset in combine:
-        dataset['Title'] = dataset.Name.str.extract(' ([A-Za-z]+)\.', expand=False)
-
-    pd.crosstab(train_df['Title'], train_df['Sex'])
-
-    # + [markdown] _cell_guid="908c08a6-3395-19a5-0cd7-13341054012a" _uuid="f766d512ea5bfe60b5eb7a816f482f2ab688fd2f"
     # We can replace many titles with a more common name or classify them as `Rare`.
 
     # + _cell_guid="553f56d7-002a-ee63-21a4-c0efad10cfe9" _uuid="b8cd938fba61fb4e226c77521b012f4bb8aa01d0"
