@@ -1,24 +1,17 @@
 import pandas as pd
 import numpy as np
 
-from transformations import add_title_from_name, classify_rare_titles
+from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal
 
 
 def run_all():
     train_df = pd.read_csv('data/train.csv')
     test_df = pd.read_csv('data/test.csv')
 
-    # ### Correcting by dropping features
-    #
-    # This is a good starting goal to execute. By dropping features we are dealing with fewer data points. Speeds up our notebook and eases the analysis.
-    #
-    # Based on our assumptions and decisions we want to drop the Cabin (correcting #2) and Ticket (correcting #1) features.
-    #
     # Note that where applicable we perform operations on both training and testing datasets together to stay consistent.
 
-    train_df = train_df.drop(['Ticket', 'Cabin'], axis=1)
+    train_df = train_df.drop(['Ticket', 'Cabin', 'PassengerId'], axis=1)
     test_df = test_df.drop(['Ticket', 'Cabin'], axis=1)
-    combine = [train_df, test_df]
 
     train_df = add_title_from_name(train_df)
     test_df = add_title_from_name(test_df)
@@ -26,19 +19,10 @@ def run_all():
     train_df = classify_rare_titles(train_df)
     test_df = classify_rare_titles(test_df)
 
-    # We can convert the categorical titles to ordinal.
+    train_df = convert_title_to_ordinal(train_df)
+    test_df = convert_title_to_ordinal(test_df)
 
-    # + _cell_guid="67444ebc-4d11-bac1-74a6-059133b6e2e8" _uuid="e805ad52f0514497b67c3726104ba46d361eb92c"
-    title_mapping = {"Mr": 1, "Miss": 2, "Mrs": 3, "Master": 4, "Rare": 5}
-    for dataset in combine:
-        dataset['Title'] = dataset['Title'].map(title_mapping)
-        dataset['Title'] = dataset['Title'].fillna(0)
-
-    # + [markdown] _cell_guid="f27bb974-a3d7-07a1-f7e4-876f6da87e62" _uuid="5fefaa1b37c537dda164c87a757fe705a99815d9"
-    # Now we can safely drop the Name feature from training and testing datasets. We also do not need the PassengerId feature in the training dataset.
-
-    # + _cell_guid="9d61dded-5ff0-5018-7580-aecb4ea17506" _uuid="1da299cf2ffd399fd5b37d74fb40665d16ba5347"
-    train_df = train_df.drop(['Name', 'PassengerId'], axis=1)
+    train_df = train_df.drop(['Name'], axis=1)
     test_df = test_df.drop(['Name'], axis=1)
     combine = [train_df, test_df]
 
