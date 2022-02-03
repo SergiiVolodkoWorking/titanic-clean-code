@@ -1,7 +1,7 @@
 import pandas as pd
-import numpy as np
 
-from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal
+from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
+    make_age_suggestions_matrix, fill_missing_age
 
 
 def run_all():
@@ -24,45 +24,21 @@ def run_all():
 
     train_df = train_df.drop(['Name'], axis=1)
     test_df = test_df.drop(['Name'], axis=1)
-    combine = [train_df, test_df]
 
     train_df = convert_sex_to_ordinal(train_df)
     test_df = convert_sex_to_ordinal(test_df)
 
-    # Let us start by preparing an empty array to contain guessed Age values based on Pclass x Gender combinations.
+    age_suggestions = make_age_suggestions_matrix(train_df)
+    train_df = fill_missing_age(train_df, age_suggestions)
 
-    # + _cell_guid="9299523c-dcf1-fb00-e52f-e2fb860a3920" _uuid="24a0971daa4cbc3aa700bae42e68c17ce9f3a6e2"
-    guess_ages = np.zeros((2, 3))
+    age_suggestions = make_age_suggestions_matrix(test_df)
+    test_df = fill_missing_age(test_df, age_suggestions)
 
-    # + [markdown] _cell_guid="ec9fed37-16b1-5518-4fa8-0a7f579dbc82" _uuid="8acd90569767b544f055d573bbbb8f6012853385"
-    # Now we iterate over Sex (0 or 1) and Pclass (1, 2, 3) to calculate guessed values of Age for the six combinations.
 
-    # + _cell_guid="a4015dfa-a0ab-65bc-0cbe-efecf1eb2569" _uuid="31198f0ad0dbbb74290ebe135abffa994b8f58f3"
-    for dataset in combine:
-        for i in range(0, 2):
-            for j in range(0, 3):
-                guess_df = dataset[(dataset['Sex'] == i) & \
-                                   (dataset['Pclass'] == j + 1)]['Age'].dropna()
 
-                # age_mean = guess_df.mean()
-                # age_std = guess_df.std()
-                # age_guess = rnd.uniform(age_mean - age_std, age_mean + age_std)
+    combine = [train_df, test_df]
 
-                age_guess = guess_df.median()
 
-                # Convert random age float to nearest .5 age
-                guess_ages[i, j] = int(age_guess / 0.5 + 0.5) * 0.5
-
-        for i in range(0, 2):
-            for j in range(0, 3):
-                dataset.loc[(dataset.Age.isnull()) & (dataset.Sex == i) & (dataset.Pclass == j + 1), \
-                            'Age'] = guess_ages[i, j]
-
-        dataset['Age'] = dataset['Age'].astype(int)
-
-    train_df.head()
-
-    # + [markdown] _cell_guid="dbe0a8bf-40bc-c581-e10e-76f07b3b71d4" _uuid="e7c52b44b703f28e4b6f4ddba67ab65f40274550"
     # Let us create Age bands and determine correlations with Survived.
 
     # + _cell_guid="725d1c84-6323-9d70-5812-baf9994d3aa1" _uuid="5c8b4cbb302f439ef0d6278dcfbdafd952675353"
