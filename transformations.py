@@ -22,3 +22,9 @@ def convert_title_to_ordinal(df):
     df['Title'] = df['Title'].fillna(0)
     df['Title'] = df['Title'].astype(int)
     return df
+
+
+def convert_sex_to_ordinal(df):
+    df['Sex'] = df['Sex'].map({'female': 1, 'male': 0})
+    df['Sex'] = df['Sex'].astype(int)
+    return df

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal
+from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal
 
 
 def run_all():
@@ -26,17 +26,9 @@ def run_all():
     test_df = test_df.drop(['Name'], axis=1)
     combine = [train_df, test_df]
 
-    # ### Converting a categorical feature
-    #
-    # Now we can convert features which contain strings to numerical values. This is required by most model algorithms. Doing so will also help us in achieving the feature completing goal.
-    #
-    # Let us start by converting Sex feature to a new feature called Gender where female=1 and male=0.
+    train_df = convert_sex_to_ordinal(train_df)
+    test_df = convert_sex_to_ordinal(test_df)
 
-    # + _cell_guid="c20c1df2-157c-e5a0-3e24-15a828095c96" _uuid="840498eaee7baaca228499b0a5652da9d4edaf37"
-    for dataset in combine:
-        dataset['Sex'] = dataset['Sex'].map({'female': 1, 'male': 0}).astype(int)
-
-    # + [markdown] _cell_guid="a4f166f9-f5f9-1819-66c3-d89dd5b0d8ff" _uuid="6b22ac53d95c7979d5f4580bd5fd29d27155c347"
     # Let us start by preparing an empty array to contain guessed Age values based on Pclass x Gender combinations.
 
     # + _cell_guid="9299523c-dcf1-fb00-e52f-e2fb860a3920" _uuid="24a0971daa4cbc3aa700bae42e68c17ce9f3a6e2"

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from pandas._testing import assert_frame_equal
 
-from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal
+from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal
 
 
 def test_add_title_from_name():
@@ -112,6 +112,24 @@ def test_convert_titles_to_ordinal():
             2,
             1,
             4
+        ]
+    })
+    assert_frame_equal(actual, expected)
+
+
+def test_convert_sex_to_ordinal():
+    df = pd.DataFrame({
+        "Sex": [
+            'female',
+            'male'
+        ]
+    })
+
+    actual = convert_sex_to_ordinal(df)
+    expected = pd.DataFrame({
+        "Sex": [
+            1,
+            0
         ]
     })
     assert_frame_equal(actual, expected)
