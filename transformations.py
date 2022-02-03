@@ -81,3 +81,8 @@ def add_isalone_from_familysize(df):
     df.loc[df['FamilySize'] == 1, 'IsAlone'] = 1
     return df
 
+
+def add_age_x_class(df):
+    df['Age*Class'] = df['Age'] * df['Pclass']
+    return df
+

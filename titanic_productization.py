@@ -2,7 +2,7 @@ import pandas as pd
 
 from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
     make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal, add_familysize_from_sibsp_and_parch, \
-    add_isalone_from_familysize
+    add_isalone_from_familysize, add_age_x_class
 
 
 def run_all():
@@ -41,25 +41,17 @@ def run_all():
     train_df = add_familysize_from_sibsp_and_parch(train_df)
     test_df = add_familysize_from_sibsp_and_parch(test_df)
 
-    train_df = add_familysize_from_sibsp_and_parch(train_df)
-    test_df = add_familysize_from_sibsp_and_parch(test_df)
-
     train_df = add_isalone_from_familysize(train_df)
     test_df = add_isalone_from_familysize(test_df)
 
     train_df = train_df.drop(['Parch', 'SibSp', 'FamilySize'], axis=1)
     test_df = test_df.drop(['Parch', 'SibSp', 'FamilySize'], axis=1)
 
+    train_df = add_age_x_class(train_df)
+    test_df = add_age_x_class(test_df)
+
     combine = [train_df, test_df]
-    # We can also create an artificial feature combining Pclass and Age.
 
-    # + _cell_guid="305402aa-1ea1-c245-c367-056eef8fe453" _uuid="aac2c5340c06210a8b0199e15461e9049fbf2cff"
-    for dataset in combine:
-        dataset['Age*Class'] = dataset.Age * dataset.Pclass
-
-    train_df.loc[:, ['Age*Class', 'Age', 'Pclass']].head(10)
-
-    # + [markdown] _cell_guid="13292c1b-020d-d9aa-525c-941331bb996a" _uuid="8264cc5676db8cd3e0b3e3f078cbaa74fd585a3c"
     # ### Completing a categorical feature
     #
     # Embarked feature takes S, Q, C values based on port of embarkation. Our training dataset has two missing values. We simply fill these with the most common occurance.

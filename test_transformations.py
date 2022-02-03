@@ -5,7 +5,7 @@ from pandas._testing import assert_frame_equal
 
 from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
     make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal, add_familysize_from_sibsp_and_parch, \
-    add_isalone_from_familysize
+    add_isalone_from_familysize, add_age_x_class
 
 
 def test_add_title_from_name():
@@ -221,3 +221,20 @@ def test_add_isalone_from_familysize():
         "IsAlone": [0, 1, 0]
     })
     assert_frame_equal(actual, expected)
+
+
+def test_add_age_x_class():
+    df = pd.DataFrame({
+        "Age": [0, 1, 4],
+        "Pclass": [3, 2, 1]
+    })
+
+    actual = add_age_x_class(df)
+
+    expected = pd.DataFrame({
+        "Age": [0, 1, 4],
+        "Pclass": [3, 2, 1],
+        "Age*Class": [0, 2, 4]
+    })
+    assert_frame_equal(actual, expected)
+
