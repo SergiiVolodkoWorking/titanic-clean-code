@@ -2,7 +2,7 @@ import pandas as pd
 
 from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
     make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal, add_familysize_from_sibsp_and_parch, \
-    add_isalone_from_familysize, add_age_x_class
+    add_isalone_from_familysize, add_age_x_class, fill_missing_embarked
 
 
 def run_all():
@@ -50,23 +50,10 @@ def run_all():
     train_df = add_age_x_class(train_df)
     test_df = add_age_x_class(test_df)
 
+    train_df = fill_missing_embarked(train_df)
+    test_df = fill_missing_embarked(test_df)
+
     combine = [train_df, test_df]
-
-    # ### Completing a categorical feature
-    #
-    # Embarked feature takes S, Q, C values based on port of embarkation. Our training dataset has two missing values. We simply fill these with the most common occurance.
-
-    # + _cell_guid="bf351113-9b7f-ef56-7211-e8dd00665b18" _uuid="1e3f8af166f60a1b3125a6b046eff5fff02d63cf"
-    freq_port = train_df.Embarked.dropna().mode()[0]
-
-    # + _cell_guid="51c21fcc-f066-cd80-18c8-3d140be6cbae" _uuid="d85b5575fb45f25749298641f6a0a38803e1ff22"
-    for dataset in combine:
-        dataset['Embarked'] = dataset['Embarked'].fillna(freq_port)
-
-    train_df[['Embarked', 'Survived']].groupby(['Embarked'], as_index=False).mean().sort_values(by='Survived',
-                                                                                                ascending=False)
-
-    # + [markdown] _cell_guid="f6acf7b2-0db3-e583-de50-7e14b495de34" _uuid="d8830e997995145314328b6218b5606df04499b0"
     # ### Converting categorical feature to numeric
     #
     # We can now convert the EmbarkedFill feature by creating a new numeric Port feature.

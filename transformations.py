@@ -86,3 +86,9 @@ def add_age_x_class(df):
     df['Age*Class'] = df['Age'] * df['Pclass']
     return df
 
+
+def fill_missing_embarked(df):
+    # fill missing port of embarkations with the most common occurrence.
+    most_common_port = df['Embarked'].dropna().mode()[0]
+    df['Embarked'] = df['Embarked'].fillna(most_common_port)
+    return df
