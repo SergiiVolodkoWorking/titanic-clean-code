@@ -1,7 +1,7 @@
 import pandas as pd
 
 from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
-    make_age_suggestions_matrix, fill_missing_age
+    make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal
 
 
 def run_all():
@@ -34,34 +34,9 @@ def run_all():
     age_suggestions = make_age_suggestions_matrix(test_df)
     test_df = fill_missing_age(test_df, age_suggestions)
 
+    train_df = convert_age_to_ordinal(train_df)
+    test_df = convert_age_to_ordinal(test_df)
 
-
-    combine = [train_df, test_df]
-
-
-    # Let us create Age bands and determine correlations with Survived.
-
-    # + _cell_guid="725d1c84-6323-9d70-5812-baf9994d3aa1" _uuid="5c8b4cbb302f439ef0d6278dcfbdafd952675353"
-    train_df['AgeBand'] = pd.cut(train_df['Age'], 5)
-    train_df[['AgeBand', 'Survived']].groupby(['AgeBand'], as_index=False).mean().sort_values(by='AgeBand',
-                                                                                              ascending=True)
-
-    # + [markdown] _cell_guid="ba4be3a0-e524-9c57-fbec-c8ecc5cde5c6" _uuid="856392dd415ac14ab74a885a37d068fc7a58f3a5"
-    # Let us replace Age with ordinals based on these bands.
-
-    # + _cell_guid="797b986d-2c45-a9ee-e5b5-088de817c8b2" _uuid="ee13831345f389db407c178f66c19cc8331445b0"
-    for dataset in combine:
-        dataset.loc[dataset['Age'] <= 16, 'Age'] = 0
-        dataset.loc[(dataset['Age'] > 16) & (dataset['Age'] <= 32), 'Age'] = 1
-        dataset.loc[(dataset['Age'] > 32) & (dataset['Age'] <= 48), 'Age'] = 2
-        dataset.loc[(dataset['Age'] > 48) & (dataset['Age'] <= 64), 'Age'] = 3
-        dataset.loc[dataset['Age'] > 64, 'Age']
-
-    # + [markdown] _cell_guid="004568b6-dd9a-ff89-43d5-13d4e9370b1d" _uuid="8e3fbc95e0fd6600e28347567416d3f0d77a24cc"
-    # We can not remove the AgeBand feature.
-
-    # + _cell_guid="875e55d4-51b0-5061-b72c-8a23946133a3" _uuid="1ea01ccc4a24e8951556d97c990aa0136da19721"
-    train_df = train_df.drop(['AgeBand'], axis=1)
     combine = [train_df, test_df]
 
     # + [markdown] _cell_guid="1c237b76-d7ac-098f-0156-480a838a64a9" _uuid="e3d4a2040c053fbd0486c8cfc4fec3224bd3ebb3"

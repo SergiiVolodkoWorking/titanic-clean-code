@@ -60,3 +60,12 @@ def fill_missing_age(df, age_suggestions):
             df.loc[should_be_guessed(df, sex, pclass), 'Age'] = age_suggestions[sex, pclass - 1]
     df['Age'] = df['Age'].astype(int)
     return df
+
+
+def convert_age_to_ordinal(df):
+    df.loc[df['Age'] <= 16, 'Age'] = 0
+    df.loc[(df['Age'] > 16) & (df['Age'] <= 32), 'Age'] = 1
+    df.loc[(df['Age'] > 32) & (df['Age'] <= 48), 'Age'] = 2
+    df.loc[(df['Age'] > 48) & (df['Age'] <= 64), 'Age'] = 3
+    df.loc[df['Age'] > 64, 'Age']
+    return df

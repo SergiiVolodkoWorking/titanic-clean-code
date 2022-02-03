@@ -4,7 +4,7 @@ from numpy.testing import assert_array_equal
 from pandas._testing import assert_frame_equal
 
 from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
-    make_age_suggestions_matrix, fill_missing_age
+    make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal
 
 
 def test_add_title_from_name():
@@ -176,4 +176,17 @@ def test_fill_missing_age():
         "Age":    [10, 45, 100],
     })
 
+    assert_frame_equal(actual, expected)
+
+
+def test_convert_age_to_ordinal():
+    df = pd.DataFrame({
+        "Age": [10, 16, 17, 32, 33, 48, 49, 64, 65]
+    })
+
+    actual = convert_age_to_ordinal(df)
+
+    expected = pd.DataFrame({
+        "Age": [0, 0, 1, 1, 2, 2, 3, 3, 65]
+    })
     assert_frame_equal(actual, expected)
