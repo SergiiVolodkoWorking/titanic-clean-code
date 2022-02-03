@@ -1,7 +1,8 @@
 import pandas as pd
 
 from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
-    make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal
+    make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal, add_familysize_from_sibsp_and_parch, \
+    add_isalone_from_familysize
 
 
 def run_all():
@@ -37,35 +38,19 @@ def run_all():
     train_df = convert_age_to_ordinal(train_df)
     test_df = convert_age_to_ordinal(test_df)
 
-    combine = [train_df, test_df]
+    train_df = add_familysize_from_sibsp_and_parch(train_df)
+    test_df = add_familysize_from_sibsp_and_parch(test_df)
 
-    # + [markdown] _cell_guid="1c237b76-d7ac-098f-0156-480a838a64a9" _uuid="e3d4a2040c053fbd0486c8cfc4fec3224bd3ebb3"
-    # ### Create new feature combining existing features
-    #
-    # We can create a new feature for FamilySize which combines Parch and SibSp. This will enable us to drop Parch and SibSp from our datasets.
+    train_df = add_familysize_from_sibsp_and_parch(train_df)
+    test_df = add_familysize_from_sibsp_and_parch(test_df)
 
-    # + _cell_guid="7e6c04ed-cfaa-3139-4378-574fd095d6ba" _uuid="33d1236ce4a8ab888b9fac2d5af1c78d174b32c7"
-    for dataset in combine:
-        dataset['FamilySize'] = dataset['SibSp'] + dataset['Parch'] + 1
+    train_df = add_isalone_from_familysize(train_df)
+    test_df = add_isalone_from_familysize(test_df)
 
-    train_df[['FamilySize', 'Survived']].groupby(['FamilySize'], as_index=False).mean().sort_values(by='Survived',
-                                                                                                    ascending=False)
-
-    # + [markdown] _cell_guid="842188e6-acf8-2476-ccec-9e3451e4fa86" _uuid="67f8e4474cd1ecf4261c153ce8b40ea23cf659e4"
-    # We can create another feature called IsAlone.
-
-    # + _cell_guid="5c778c69-a9ae-1b6b-44fe-a0898d07be7a" _uuid="3b8db81cc3513b088c6bcd9cd1938156fe77992f"
-    for dataset in combine:
-        dataset['IsAlone'] = 0
-        dataset.loc[dataset['FamilySize'] == 1, 'IsAlone'] = 1
-    # Let us drop Parch, SibSp, and FamilySize features in favor of IsAlone.
-
-    # + _cell_guid="74ee56a6-7357-f3bc-b605-6c41f8aa6566" _uuid="1e3479690ef7cd8ee10538d4f39d7117246887f0"
     train_df = train_df.drop(['Parch', 'SibSp', 'FamilySize'], axis=1)
     test_df = test_df.drop(['Parch', 'SibSp', 'FamilySize'], axis=1)
-    combine = [train_df, test_df]
 
-    # + [markdown] _cell_guid="f890b730-b1fe-919e-fb07-352fbd7edd44" _uuid="71b800ed96407eba05220f76a1288366a22ec887"
+    combine = [train_df, test_df]
     # We can also create an artificial feature combining Pclass and Age.
 
     # + _cell_guid="305402aa-1ea1-c245-c367-056eef8fe453" _uuid="aac2c5340c06210a8b0199e15461e9049fbf2cff"

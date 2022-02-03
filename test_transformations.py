@@ -4,7 +4,8 @@ from numpy.testing import assert_array_equal
 from pandas._testing import assert_frame_equal
 
 from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
-    make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal
+    make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal, add_familysize_from_sibsp_and_parch, \
+    add_isalone_from_familysize
 
 
 def test_add_title_from_name():
@@ -188,5 +189,35 @@ def test_convert_age_to_ordinal():
 
     expected = pd.DataFrame({
         "Age": [0, 0, 1, 1, 2, 2, 3, 3, 4]
+    })
+    assert_frame_equal(actual, expected)
+
+
+def test_add_familysize_from_sibsp_and_parch():
+    df = pd.DataFrame({
+        "SibSp": [10, 20],
+        "Parch": [100, 200]
+    })
+
+    actual = add_familysize_from_sibsp_and_parch(df)
+
+    expected = pd.DataFrame({
+        "SibSp": [10, 20],
+        "Parch": [100, 200],
+        "FamilySize": [111, 221]
+    })
+    assert_frame_equal(actual, expected)
+
+
+def test_add_isalone_from_familysize():
+    df = pd.DataFrame({
+        "FamilySize": [10, 1, 2]
+    })
+
+    actual = add_isalone_from_familysize(df)
+
+    expected = pd.DataFrame({
+        "FamilySize": [10, 1, 2],
+        "IsAlone": [0, 1, 0]
     })
     assert_frame_equal(actual, expected)

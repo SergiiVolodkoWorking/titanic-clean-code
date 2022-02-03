@@ -69,3 +69,15 @@ def convert_age_to_ordinal(df):
     df.loc[(df['Age'] > 48) & (df['Age'] <= 64), 'Age'] = 3
     df.loc[df['Age'] > 64, 'Age'] = 4
     return df
+
+
+def add_familysize_from_sibsp_and_parch(df):
+    df['FamilySize'] = df['SibSp'] + df['Parch'] + 1
+    return df
+
+
+def add_isalone_from_familysize(df):
+    df['IsAlone'] = 0
+    df.loc[df['FamilySize'] == 1, 'IsAlone'] = 1
+    return df
+
