@@ -187,6 +187,6 @@ def test_convert_age_to_ordinal():
     actual = convert_age_to_ordinal(df)
 
     expected = pd.DataFrame({
-        "Age": [0, 0, 1, 1, 2, 2, 3, 3, 65]
+        "Age": [0, 0, 1, 1, 2, 2, 3, 3, 4]
     })
     assert_frame_equal(actual, expected)
