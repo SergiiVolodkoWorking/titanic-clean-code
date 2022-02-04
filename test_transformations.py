@@ -3,7 +3,7 @@ import pandas as pd
 from numpy.testing import assert_array_equal
 from pandas._testing import assert_frame_equal
 
-from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
+from transformations import add_title_from_name, classify_rare_titles, \
     make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal, add_familysize_from_sibsp_and_parch, \
     add_isalone_from_familysize, add_age_x_class, fill_missing_embarked, convert_to_ordinal
 
@@ -87,52 +87,6 @@ def test_classify_rare_titles():
             'Miss',
             'Mr',
             'Master'
-        ]
-    })
-    assert_frame_equal(actual, expected)
-
-
-def test_convert_titles_to_ordinal():
-    df = pd.DataFrame({
-        "Title": [
-            'Rare',
-            'Miss',
-            np.nan,
-            'Mrs',
-            'Miss',
-            'Mr',
-            'Master'
-        ]
-    })
-
-    actual = convert_title_to_ordinal(df)
-    expected = pd.DataFrame({
-        "Title": [
-            5,
-            2,
-            0,
-            3,
-            2,
-            1,
-            4
-        ]
-    })
-    assert_frame_equal(actual, expected)
-
-
-def test_convert_sex_to_ordinal():
-    df = pd.DataFrame({
-        "Sex": [
-            'female',
-            'male'
-        ]
-    })
-
-    actual = convert_sex_to_ordinal(df)
-    expected = pd.DataFrame({
-        "Sex": [
-            1,
-            0
         ]
     })
     assert_frame_equal(actual, expected)

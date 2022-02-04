@@ -1,6 +1,7 @@
+import numpy as np
 import pandas as pd
 
-from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
+from transformations import add_title_from_name, classify_rare_titles, \
     make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal, add_familysize_from_sibsp_and_parch, \
     add_isalone_from_familysize, add_age_x_class, fill_missing_embarked, convert_to_ordinal
 
@@ -20,14 +21,16 @@ def run_all():
     train_df = classify_rare_titles(train_df)
     test_df = classify_rare_titles(test_df)
 
-    train_df = convert_title_to_ordinal(train_df)
-    test_df = convert_title_to_ordinal(test_df)
+    title_mapping = {"Mr": 1, "Miss": 2, "Mrs": 3, "Master": 4, "Rare": 5, np.nan: 0}
+    train_df = convert_to_ordinal(train_df, "Title", title_mapping)
+    test_df = convert_to_ordinal(test_df, "Title", title_mapping)
 
     train_df = train_df.drop(['Name'], axis=1)
     test_df = test_df.drop(['Name'], axis=1)
 
-    train_df = convert_sex_to_ordinal(train_df)
-    test_df = convert_sex_to_ordinal(test_df)
+    sex_mapping = {'female': 1, 'male': 0}
+    train_df = convert_to_ordinal(train_df, 'Sex', sex_mapping)
+    test_df = convert_to_ordinal(test_df, 'Sex', sex_mapping)
 
     age_suggestions = make_age_suggestions_matrix(train_df)
     train_df = fill_missing_age(train_df, age_suggestions)

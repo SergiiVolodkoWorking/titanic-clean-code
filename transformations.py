@@ -20,19 +20,6 @@ def classify_rare_titles(df):
     return df
 
 
-def convert_title_to_ordinal(df):
-    title_mapping = {"Mr": 1, "Miss": 2, "Mrs": 3, "Master": 4, "Rare": 5, np.nan: 0}
-    df['Title'] = df['Title'].map(title_mapping)
-    df['Title'] = df['Title'].astype(int)
-    return df
-
-
-def convert_sex_to_ordinal(df):
-    df['Sex'] = df['Sex'].map({'female': 1, 'male': 0})
-    df['Sex'] = df['Sex'].astype(int)
-    return df
-
-
 def make_age_suggestions_matrix(df):
     # matrix to contain guessed Age values based on Pclass x Gender combinations.
     age_guesses = np.zeros((2, 3))
