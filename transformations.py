@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 
 def add_title_from_name(df):
@@ -20,9 +21,8 @@ def classify_rare_titles(df):
 
 
 def convert_title_to_ordinal(df):
-    title_mapping = {"Mr": 1, "Miss": 2, "Mrs": 3, "Master": 4, "Rare": 5}
+    title_mapping = {"Mr": 1, "Miss": 2, "Mrs": 3, "Master": 4, "Rare": 5, np.nan: 0}
     df['Title'] = df['Title'].map(title_mapping)
-    df['Title'] = df['Title'].fillna(0)
     df['Title'] = df['Title'].astype(int)
     return df
 
@@ -91,4 +91,10 @@ def fill_missing_embarked(df):
     # fill missing port of embarkations with the most common occurrence.
     most_common_port = df['Embarked'].dropna().mode()[0]
     df['Embarked'] = df['Embarked'].fillna(most_common_port)
+    return df
+
+
+def convert_to_ordinal(df: pd.DataFrame, col_name: str, mapping: dict):
+    df[col_name] = df[col_name].map(mapping)
+    df[col_name] = df[col_name].astype(int)
     return df

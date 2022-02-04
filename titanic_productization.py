@@ -2,7 +2,7 @@ import pandas as pd
 
 from transformations import add_title_from_name, classify_rare_titles, convert_title_to_ordinal, convert_sex_to_ordinal, \
     make_age_suggestions_matrix, fill_missing_age, convert_age_to_ordinal, add_familysize_from_sibsp_and_parch, \
-    add_isalone_from_familysize, add_age_x_class, fill_missing_embarked
+    add_isalone_from_familysize, add_age_x_class, fill_missing_embarked, convert_to_ordinal
 
 
 def run_all():
@@ -53,16 +53,11 @@ def run_all():
     train_df = fill_missing_embarked(train_df)
     test_df = fill_missing_embarked(test_df)
 
+    ports_mapping = {'S': 0, 'C': 1, 'Q': 2}
+    train_df = convert_to_ordinal(train_df, 'Embarked', ports_mapping)
+    test_df = convert_to_ordinal(test_df, 'Embarked', ports_mapping)
+
     combine = [train_df, test_df]
-    # ### Converting categorical feature to numeric
-    #
-    # We can now convert the EmbarkedFill feature by creating a new numeric Port feature.
-
-    # + _cell_guid="89a91d76-2cc0-9bbb-c5c5-3c9ecae33c66" _uuid="e480a1ef145de0b023821134896391d568a6f4f9"
-    for dataset in combine:
-        dataset['Embarked'] = dataset['Embarked'].map({'S': 0, 'C': 1, 'Q': 2}).astype(int)
-
-    # + [markdown] _cell_guid="e3dfc817-e1c1-a274-a111-62c1c814cecf" _uuid="d79834ebc4ab9d48ed404584711475dbf8611b91"
     # ### Quick completing and converting a numeric feature
     #
     # We can now complete the Fare feature for single missing value in test dataset using mode to get the value that occurs most frequently for this feature. We do this in a single line of code.
