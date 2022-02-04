@@ -85,3 +85,18 @@ def convert_to_ordinal(df: pd.DataFrame, col_name: str, mapping: dict):
     df[col_name] = df[col_name].map(mapping)
     df[col_name] = df[col_name].astype(int)
     return df
+
+
+def fill_missing_fare(df):
+    median_price = df['Fare'].dropna().median()
+    df['Fare'] = df['Fare'].fillna(median_price)
+    return df
+
+
+def convert_fare_to_ordinal(df):
+    df.loc[df['Fare'] <= 7.91, 'Fare'] = 0
+    df.loc[(df['Fare'] > 7.91) & (df['Fare'] <= 14.454), 'Fare'] = 1
+    df.loc[(df['Fare'] > 14.454) & (df['Fare'] <= 31), 'Fare'] = 2
+    df.loc[df['Fare'] > 31, 'Fare'] = 3
+    df['Fare'] = df['Fare'].astype(int)
+    return df
